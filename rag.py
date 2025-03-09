@@ -107,7 +107,7 @@ def get_response(question):
     Your answer should:
     1. Be directly relevant to the question
     2. Include specific facts from the context where applicable
-    3. Cite sources when quoting information (mention PDF page numbers or CSV data when available)
+    3. Cite sources when quoting information (mention PDF page numbers or CSV data when available only)
     4. Be well-structured and easy to understand
     5. Give answer with same language as the question
 

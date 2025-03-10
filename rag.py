@@ -13,11 +13,8 @@ from pydantic import BaseModel, Field
 import logging
 import os
 
-try:
-    load_dotenv(find_dotenv())
-except:
-    pass
 
+# Set up logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
@@ -25,11 +22,14 @@ logging.basicConfig(
 
 logger = logging.getLogger()
 
+# Log that the RAG engine is starting
 logger.debug("Starting the RAG engine")
 
 try:
     logger.info("Loading environment variables...")
 
+    # Load environment and object initialization
+    load_dotenv(find_dotenv())
     GROQ_APIKEY = os.environ.get("GROQ_APIKEY")
     chat_model = init_chat_model(
         "gemma2-9b-it", 
@@ -44,13 +44,21 @@ except Exception as e:
 
 
 
+# Class for output format in query query_expansion_chain
 class ExpandOutputParser(BaseModel):
     """Use this format for creating expand query"""
     answers: list[str] = Field(description="List of expanded questions")
 
 
 
-def expand_query(question):
+def expand_query(question: str) -> list[str]:
+    """
+    Expands a given question by generating variations questions.
+    Args:
+        question (str): The original question to expand
+    Returns:
+        list[str]: A list containing the Indonesian translations and variations of the original question
+    """
     expand_parser = PydanticOutputParser(pydantic_object=ExpandOutputParser)
     query_expansion_prompt_template = """
     Translate the question into Indonesian, then generate 3 different version of the given question that would help in retrieving relevant information in Indonesian.
@@ -77,7 +85,15 @@ def expand_query(question):
     return query_lists.answers
 
 
-def get_response(question):
+def get_response(question: str) -> str:
+    """
+    Generate a response to a question using RAG (Retrieval-Augmented Generation).
+        Parameters
+    Args:
+        question (str):The input question to be answered
+    Returns:
+        str: The response to the question
+    """
     expanded_queries = expand_query(question)
 
     all_documents = []

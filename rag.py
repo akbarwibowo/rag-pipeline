@@ -101,7 +101,7 @@ def get_response(question: str) -> str:
     for query in expanded_queries:
         documents = vector_store.max_marginal_relevance_search(
             query=query,
-            k=3,
+            k=5,
             fetch_k=20,
             lambda_mult=0.5
         )
